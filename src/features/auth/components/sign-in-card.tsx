@@ -22,11 +22,13 @@ interface SignInCardProps {
 const SignInCard = ({ setState }: SignInCardProps) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [peding, setPending] = useState(false);
 
   const { signIn } = useAuthActions();
 
   const handleProviderSignIn = (value: "github" | "google") => {
-    signIn(value);
+    setPending(true);
+    signIn(value).finally(() => setPending(false));
   };
 
   return (
@@ -42,7 +44,7 @@ const SignInCard = ({ setState }: SignInCardProps) => {
       <CardContent className="space-y-5 px-0 pb-0">
         <form className="space-y-2.5">
           <Input
-            disabled={false}
+            disabled={peding}
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             placeholder="E-mail"
@@ -50,7 +52,7 @@ const SignInCard = ({ setState }: SignInCardProps) => {
             required
           />
           <Input
-            disabled={false}
+            disabled={peding}
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             placeholder="Senha"
@@ -58,7 +60,12 @@ const SignInCard = ({ setState }: SignInCardProps) => {
             required
           />
 
-          <Button type="submit" className="w-full" size={"lg"} disabled={false}>
+          <Button
+            type="submit"
+            className="w-full"
+            size={"lg"}
+            disabled={peding}
+          >
             Continue
           </Button>
         </form>
@@ -66,7 +73,7 @@ const SignInCard = ({ setState }: SignInCardProps) => {
 
         <div className="flex flex-col gap-y-2.5">
           <Button
-            disabled={false}
+            disabled={peding}
             onClick={() => handleProviderSignIn("google")}
             variant={"outline"}
             className="w-full relative"
@@ -76,7 +83,7 @@ const SignInCard = ({ setState }: SignInCardProps) => {
           </Button>
 
           <Button
-            disabled={false}
+            disabled={peding}
             onClick={() => handleProviderSignIn("github")}
             variant={"outline"}
             className="w-full relative"
