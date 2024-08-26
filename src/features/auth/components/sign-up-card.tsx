@@ -23,6 +23,7 @@ const SignUpCard = ({ setState }: SignUpCardProps) => {
   const { signIn } = useAuthActions();
 
   const [email, setEmail] = useState("");
+  const [name, setName] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [peding, setPending] = useState(false);
@@ -37,7 +38,7 @@ const SignUpCard = ({ setState }: SignUpCardProps) => {
     }
 
     setPending(true);
-    signIn("password", { email, password, flow: "signUp" })
+    signIn("password", { name, email, password, flow: "signUp" })
       .catch(() => {
         setError("Erro ao criar conta, tente novamente mais tarde.");
       })
@@ -68,6 +69,14 @@ const SignUpCard = ({ setState }: SignUpCardProps) => {
 
       <CardContent className="space-y-5 px-0 pb-0">
         <form className="space-y-2.5" onSubmit={onPasswordSignUp}>
+          <Input
+            disabled={peding}
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            placeholder="Nome completo"
+            type="text"
+            required
+          />
           <Input
             disabled={peding}
             value={email}
