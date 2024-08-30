@@ -3,6 +3,7 @@ import { useCurrentMember } from "@/features/members/api/use-current-member";
 import { useGetWorkspace } from "@/features/workspaces/api/use-get-workspace";
 import { useCreateChannelModal } from "@/features/channels/store/use-create-channel-modal";
 import { useWorkspaceId } from "@/hooks/use-workspace-id";
+import { useChanneleId } from "@/hooks/use-channel-id";
 import {
   AlertTriangle,
   HashIcon,
@@ -18,6 +19,7 @@ import UserItem from "./user-item";
 
 const WorkspaceSidebar = () => {
   const workspaceId = useWorkspaceId();
+  const channelId = useChanneleId();
 
   const [_, setOpen] = useCreateChannelModal();
 
@@ -79,6 +81,7 @@ const WorkspaceSidebar = () => {
             label={item.name}
             icon={HashIcon}
             id={item._id}
+            variant={channelId === item._id ? "active" : "default"}
           />
         ))}
       </WorkspaceSection>
