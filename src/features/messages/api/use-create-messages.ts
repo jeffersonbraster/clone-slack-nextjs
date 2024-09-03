@@ -3,7 +3,7 @@ import { useMutation } from "convex/react";
 import { api } from "../../../../convex/_generated/api";
 import { Doc, Id } from "../../../../convex/_generated/dataModel";
 
-type RequestType = { body: string, image?: Id<"_storage">, workspaceId: Id<"workspaces">, channelId?: Id<"channels">, parentMessageId?: Id<"messages"> }
+type RequestType = { body: string, image?: Id<"_storage">, workspaceId: Id<"workspaces">, channelId?: Id<"channels">, parentMessageId?: Id<"messages">, conversationId?: Id<"conversations"> }
 type ResponseType = Id<"messages">
 
 type Options = {
