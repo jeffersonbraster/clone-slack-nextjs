@@ -130,6 +130,68 @@ const getMember = async (ctx: QueryCtx, workspaceId: Id<"workspaces">, userId: I
   return ctx.db.query("members").withIndex("by_workspace_id_user_id", (q) => q.eq("workspaceId", workspaceId).eq("userId", userId)).unique();
 }
 
+export const update = mutation ({
+  args: {
+    id: v.id("messages"),
+    body: v.string(),
+  },
+  handler: async(ctx, args) => {
+    const userId = await auth.getUserId(ctx);
+
+    if (!userId) {
+      throw new Error("Sem autorização");
+    }
+
+    const message = await ctx.db.get(args.id);
+
+    if (!message) {
+      throw new Error("Mensagem não encontrada");
+    }
+
+    const member = await getMember(ctx, message.workspaceId, userId);
+
+    if (!member || member._id !== message.memberId) {
+      throw new Error("Sem autorização");
+    }
+
+    await ctx.db.patch(args.id, {
+      body: args.body,
+      updatedAt: Date.now(),
+    })
+
+    return args.id;
+  },
+})
+
+export const remove = mutation ({
+  args: {
+    id: v.id("messages")
+  },
+  handler: async(ctx, args) => {
+    const userId = await auth.getUserId(ctx);
+
+    if (!userId) {
+      throw new Error("Sem autorização");
+    }
+
+    const message = await ctx.db.get(args.id);
+
+    if (!message) {
+      throw new Error("Mensagem não encontrada");
+    }
+
+    const member = await getMember(ctx, message.workspaceId, userId);
+
+    if (!member || member._id !== message.memberId) {
+      throw new Error("Sem autorização");
+    }
+
+    await ctx.db.delete(args.id);
+
+    return args.id;
+  },
+})
+
 export const create = mutation({
   args: {
     body: v.string(),

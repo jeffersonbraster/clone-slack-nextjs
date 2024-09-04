@@ -38,7 +38,7 @@ const Toolbar = ({
 
         {!hideThreadButton && (
           <Hint label="Compartilhar thread">
-            <Button variant={"ghost"} size={"iconSm"} disabled={isPending}>
+            <Button variant={"ghost"} size={"iconSm"} disabled={isPending} onClick={handleThread}>
               <MessageSquareTextIcon className="size-4" />
             </Button>
           </Hint>
@@ -46,7 +46,7 @@ const Toolbar = ({
 
         {isAuthor && (
           <Hint label="Editar mensagem">
-            <Button variant={"ghost"} size={"iconSm"} disabled={isPending}>
+            <Button variant={"ghost"} size={"iconSm"} disabled={isPending} onClick={handleEdit}>
               <Pencil className="size-4" />
             </Button>
           </Hint>
@@ -54,7 +54,7 @@ const Toolbar = ({
 
         {isAuthor && (
           <Hint label="Deletar Mensagem">
-            <Button variant={"ghost"} size={"iconSm"} disabled={isPending}>
+            <Button variant={"ghost"} size={"iconSm"} disabled={isPending} onClick={handleDelete}>
               <Trash className="size-4 text-rose-600" />
             </Button>
           </Hint>
