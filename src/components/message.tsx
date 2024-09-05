@@ -10,6 +10,8 @@ import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import { useDeleteMessage } from "@/features/messages/api/use-remove-messages";
 import UseConfirm from "@/hooks/use-confirm";
+import { useToggleReaction } from "@/features/reactions/api/use-toggle-reaction";
+import Reactions from "./reactions";
 
 const Renderer = dynamic(() => import("./renderer"), { ssr: false });
 const Editor = dynamic(() => import("./editor"), { ssr: false });
@@ -74,7 +76,17 @@ const Message = ({
   const { mutate: deleteMessage, isPending: isDeletingMessage } =
     useDeleteMessage();
 
+  const {mutate: toggleReaction, isPending: isToggleReaction} = useToggleReaction();
+
   const isPending = isUpdatingMessage;
+
+  const handleReaction = (value: string) => {
+    toggleReaction({value, messageId: id}, {
+      onError: () => {
+        toast.error("Erro ao reagir a mensagem");
+      }
+    });
+  }
 
   const handleDelete = async () => {
     const ok = await confirm();
@@ -148,6 +160,7 @@ const Message = ({
                     (editado)
                   </span>
                 ) : null}
+                <Reactions data={reactions} onChange={handleReaction} />
               </div>
             )}
           </div>
@@ -159,7 +172,7 @@ const Message = ({
               handleThread={() => {}}
               handleDelete={handleDelete}
               hideThreadButton={hideThreadButton}
-              handleReaction={() => {}}
+              handleReaction={handleReaction}
             />
           )}
         </div>
@@ -218,6 +231,7 @@ const Message = ({
               {updatedAt ? (
                 <span className="text-xs text-muted-foreground">(editado)</span>
               ) : null}
+              <Reactions data={reactions} onChange={handleReaction} />
             </div>
           )}
         </div>
@@ -230,7 +244,7 @@ const Message = ({
             handleThread={() => {}}
             handleDelete={handleDelete}
             hideThreadButton={hideThreadButton}
-            handleReaction={() => {}}
+            handleReaction={handleReaction}
           />
         )}
       </div>
