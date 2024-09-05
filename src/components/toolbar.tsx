@@ -37,7 +37,7 @@ const Toolbar = ({
         </Hint>
 
         {!hideThreadButton && (
-          <Hint label="Compartilhar thread">
+          <Hint label="Ver thread">
             <Button variant={"ghost"} size={"iconSm"} disabled={isPending} onClick={handleThread}>
               <MessageSquareTextIcon className="size-4" />
             </Button>

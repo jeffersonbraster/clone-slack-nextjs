@@ -12,6 +12,7 @@ import { useDeleteMessage } from "@/features/messages/api/use-remove-messages";
 import UseConfirm from "@/hooks/use-confirm";
 import { useToggleReaction } from "@/features/reactions/api/use-toggle-reaction";
 import Reactions from "./reactions";
+import { usePanel } from "@/hooks/use-panel";
 
 const Renderer = dynamic(() => import("./renderer"), { ssr: false });
 const Editor = dynamic(() => import("./editor"), { ssr: false });
@@ -36,7 +37,7 @@ interface MessageProps {
   isCompact?: boolean;
   setEditingId: (id: Id<"messages"> | null) => void;
   hideThreadButton?: boolean;
-  threadCount: number;
+  threadCount?: number;
   threadImage?: string;
   threadTimestamp?: number;
 }
@@ -70,6 +71,8 @@ const Message = ({
     "Essa ação não pode ser desfeita."
   );
 
+  const {onOpenMessage, onCloseMessage, parentMessageId} = usePanel();
+
   const { mutate: updateMessage, isPending: isUpdatingMessage } =
     useUpdateMessage();
 
@@ -98,6 +101,9 @@ const Message = ({
       {
         onSuccess: () => {
           toast.success("Mensagem excluída com sucesso");
+          if(parentMessageId === id) {
+            onCloseMessage();
+          }
         },
         onError: () => {
           toast.error("Erro ao excluir mensagem");
@@ -169,7 +175,7 @@ const Message = ({
               isAuthor={isAuthor}
               isPending={isPending}
               handleEdit={() => setEditingId(id)}
-              handleThread={() => {}}
+              handleThread={() => onOpenMessage(id)}
               handleDelete={handleDelete}
               hideThreadButton={hideThreadButton}
               handleReaction={handleReaction}
@@ -241,7 +247,7 @@ const Message = ({
             isAuthor={isAuthor}
             isPending={isPending}
             handleEdit={() => setEditingId(id)}
-            handleThread={() => {}}
+            handleThread={() => onOpenMessage(id)}
             handleDelete={handleDelete}
             hideThreadButton={hideThreadButton}
             handleReaction={handleReaction}
