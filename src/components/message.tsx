@@ -13,6 +13,7 @@ import UseConfirm from "@/hooks/use-confirm";
 import { useToggleReaction } from "@/features/reactions/api/use-toggle-reaction";
 import Reactions from "./reactions";
 import { usePanel } from "@/hooks/use-panel";
+import ThreadBar from "./thread-bar";
 
 const Renderer = dynamic(() => import("./renderer"), { ssr: false });
 const Editor = dynamic(() => import("./editor"), { ssr: false });
@@ -39,6 +40,7 @@ interface MessageProps {
   hideThreadButton?: boolean;
   threadCount?: number;
   threadImage?: string;
+  threadName?: string;
   threadTimestamp?: number;
 }
 
@@ -64,6 +66,7 @@ const Message = ({
   hideThreadButton,
   threadCount,
   threadImage,
+  threadName,
   threadTimestamp,
 }: MessageProps) => {
   const [ConfirmDialog, confirm] = UseConfirm(
@@ -71,7 +74,7 @@ const Message = ({
     "Essa ação não pode ser desfeita."
   );
 
-  const {onOpenMessage, onCloseMessage, parentMessageId} = usePanel();
+  const { onOpenMessage, onCloseMessage, parentMessageId } = usePanel();
 
   const { mutate: updateMessage, isPending: isUpdatingMessage } =
     useUpdateMessage();
@@ -79,17 +82,21 @@ const Message = ({
   const { mutate: deleteMessage, isPending: isDeletingMessage } =
     useDeleteMessage();
 
-  const {mutate: toggleReaction, isPending: isToggleReaction} = useToggleReaction();
+  const { mutate: toggleReaction, isPending: isToggleReaction } =
+    useToggleReaction();
 
   const isPending = isUpdatingMessage;
 
   const handleReaction = (value: string) => {
-    toggleReaction({value, messageId: id}, {
-      onError: () => {
-        toast.error("Erro ao reagir a mensagem");
+    toggleReaction(
+      { value, messageId: id },
+      {
+        onError: () => {
+          toast.error("Erro ao reagir a mensagem");
+        },
       }
-    });
-  }
+    );
+  };
 
   const handleDelete = async () => {
     const ok = await confirm();
@@ -101,7 +108,7 @@ const Message = ({
       {
         onSuccess: () => {
           toast.success("Mensagem excluída com sucesso");
-          if(parentMessageId === id) {
+          if (parentMessageId === id) {
             onCloseMessage();
           }
         },
@@ -138,7 +145,8 @@ const Message = ({
           className={cn(
             "flex flex-col gap-2 p-1.5 px-5 hover:bg-grey-100/60 group relative",
             isEditing && "bg-[#f2c74433] hover:bg-[#f2c14433]",
-            isDeletingMessage && "bg-rose-500/50 transform transition-all scale-y-0 origin-bottom duration-200"
+            isDeletingMessage &&
+              "bg-rose-500/50 transform transition-all scale-y-0 origin-bottom duration-200"
           )}
         >
           <div className="flex items-start gap-2">
@@ -167,6 +175,13 @@ const Message = ({
                   </span>
                 ) : null}
                 <Reactions data={reactions} onChange={handleReaction} />
+                <ThreadBar
+                  count={threadCount}
+                  image={threadImage}
+                  name={threadName}
+                  timestamp={threadTimestamp}
+                  onClick={() => onOpenMessage(id)}
+                />
               </div>
             )}
           </div>
@@ -193,7 +208,8 @@ const Message = ({
         className={cn(
           "flex flex-col gap-2 p-1.5 px-5 hover:bg-grey-100/60 group relative",
           isEditing && "bg-[#f2c74433] hover:bg-[#f2c14433]",
-          isDeletingMessage && "bg-rose-500/50 transform transition-all scale-y-0 origin-bottom duration-200"
+          isDeletingMessage &&
+            "bg-rose-500/50 transform transition-all scale-y-0 origin-bottom duration-200"
         )}
       >
         <div className="flex items-start gap-2">
@@ -238,6 +254,13 @@ const Message = ({
                 <span className="text-xs text-muted-foreground">(editado)</span>
               ) : null}
               <Reactions data={reactions} onChange={handleReaction} />
+              <ThreadBar
+                count={threadCount}
+                image={threadImage}
+                name={threadName}
+                timestamp={threadTimestamp}
+                onClick={() => onOpenMessage(id)}
+              />
             </div>
           )}
         </div>
