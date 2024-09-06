@@ -74,7 +74,8 @@ const Message = ({
     "Essa ação não pode ser desfeita."
   );
 
-  const { onOpenMessage, onCloseMessage, parentMessageId } = usePanel();
+  const { onOpenMessage, onCloseMessage, parentMessageId, onOpenProfile } =
+    usePanel();
 
   const { mutate: updateMessage, isPending: isUpdatingMessage } =
     useUpdateMessage();
@@ -85,7 +86,7 @@ const Message = ({
   const { mutate: toggleReaction, isPending: isToggleReaction } =
     useToggleReaction();
 
-  const isPending = isUpdatingMessage;
+  const isPending = isUpdatingMessage || isToggleReaction;
 
   const handleReaction = (value: string) => {
     toggleReaction(
@@ -213,7 +214,7 @@ const Message = ({
         )}
       >
         <div className="flex items-start gap-2">
-          <button>
+          <button onClick={() => onOpenProfile(memberId)}>
             <Avatar>
               <AvatarImage src={authorImage} />
 
@@ -236,7 +237,7 @@ const Message = ({
             <div className="flex flex-col w-full overflow-hidden">
               <div className="text-sm">
                 <button
-                  onClick={() => {}}
+                  onClick={() => onOpenProfile(memberId)}
                   className="font-bold text-primary hover:underline"
                 >
                   {authorName}
